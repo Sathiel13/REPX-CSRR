@@ -1,37 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const User = require('../models/User');
+const User = require("../models/user"); // Asegúrate de que este modelo existe
 
-// Ruta para crear un nuevo usuario
-router.post('/register', async (req, res) => {
+//Est ruta uso para manejar POST/users
+router.post("/", async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: 'El correo ya está registrado' });
-        }
-
-        const user = new User({
-            name,
-            email,
-            password
-        });
-
-        await user.save();
-        res.status(201).json({ message: 'Usuario registrado correctamente' });
+        const newUser = new User({ name, email, password });
+        await newUser.save();
+        res.status(201).json({ message: "Usuario creado con éxito", user: newUser });
     } catch (error) {
-        res.status(500).json({ message: 'Error al registrar el usuario' });
-    }
-});
-
-// Ruta para obtener todos los usuarios
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al obtener los usuarios' });
+        res.status(500).json({ message: "Error al agregar usuario", error: error.message });
     }
 });
 
